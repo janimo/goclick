@@ -9,9 +9,8 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -117,20 +116,14 @@ func Copytree(src, dest string, ignores []string) {
 }
 
 // Get total size of all files in a dir
-//TODO: implement without relying on the du command
+//Output of "du -ks --apparent-size"
 func GetDirSize(dir string) string {
-	cmd := exec.Command("du", "-k", "-s", "--apparent-size", dir)
-	out, err := cmd.Output()
-	if err != nil {
-		ExitError(err)
-	}
-	re, err := regexp.Compile("^([0-9]+)\\s+")
-	if err != nil {
-		ExitError(err)
-	}
-	m := re.FindStringSubmatch(string(out))
-	return m[1]
-
+	size := 0
+	filepath.Walk(dir, func(fn string, fi os.FileInfo, err error) error {
+		size += int(fi.Size())
+		return nil
+	})
+	return strconv.Itoa(size / 1024)
 }
 
 //Ensure the path ends in "/"
@@ -139,5 +132,4 @@ func AppendSlash(path string) string {
 		path = path + "/"
 	}
 	return path
-
 }
