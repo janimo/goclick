@@ -100,5 +100,5 @@ func runBuildsource(args []string) {
 	if err != nil {
 		utils.ExitError(err)
 	}
-	fmt.Println("Successfully built source package in '%s'.", path)
+	fmt.Printf("Successfully built source package in '%s'.\n", path)
 }
