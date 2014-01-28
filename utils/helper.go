@@ -109,6 +109,10 @@ func copyfile(src, dest string) {
 //cpa copies src to dest recursively, ignoring entries matching any of the ignore patterns
 func Copytree(src, dest string, ignores []string) {
 	dest = dest + "/"
+	src, err := filepath.Abs(src)
+	if err != nil {
+		ExitError(err)
+	}
 	Walk(src, func(s string, fi os.FileInfo) {
 		d := strings.Replace(s, src, dest, 1)
 		copyfile(s, d)
